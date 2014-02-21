@@ -3,7 +3,7 @@ PsiTurk_Flanker
 
 Created by Matthew Crump 2014
 
-Sample code for running a web-based flanker (a la Eriksen & Eriksen, 1974) experiment. This code is based on the scripts used by Crump, McDonnell, & Gureckis (2013) to replicate the flanker effect via Amazon Mechanical Turk. It has been edited for clarity and with added comments throughout.
+Sample code for running a web-based flanker (a la Eriksen & Eriksen, 1974) experiment. This code is based on the scripts used by [Crump, McDonnell, & Gureckis (2013)](http://www.plosone.org/article/info%3Adoi%2F10.1371%2Fjournal.pone.0057410) to replicate the flanker effect via Amazon Mechanical Turk. It has been edited for clarity and with added comments throughout, and to interface with [Psiturk](http://psiturk.org).
 
 ##Contents
 
@@ -34,6 +34,6 @@ JQUERY library (helpful tools for easily controlling HTML element behavior with 
 
 ##References
 
-Crump, M. J., McDonnell, J. V., & Gureckis, T. M. (2013). Evaluating Amazon's Mechanical Turk as a tool for experimental behavioral research. PloS one, 8(3), e57410.
+[Crump, M. J., McDonnell, J. V., & Gureckis, T. M. (2013). Evaluating Amazon's Mechanical Turk as a tool for experimental behavioral research. PloS one, 8(3), e57410.](http://www.plosone.org/article/info%3Adoi%2F10.1371%2Fjournal.pone.0057410)
 
 Eriksen, B. A., & Eriksen, C. W. (1974). Effects of noise letters upon the identification of a target letter in a nonsearch task. Perception & Psychophysics, 16(1), 143-149.
