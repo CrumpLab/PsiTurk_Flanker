@@ -1,0 +1,169 @@
+* {
+  font-family: Helvetica, sans-serif;
+  box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+}
+
+body {
+  height: 100%;
+  background-color: black;
+  color: white;
+}
+
+#ConsentFrame {
+	background-color: white;
+	color: white;
+}
+
+#InstructionFrame {
+	background-color: white;
+	color: white;
+}
+
+#trial {
+	font-size: 20pt;
+		color: black;
+	text-align: center;
+}
+
+#BStart2 {
+	font-size: 20pt;
+		color: black;
+	text-align: center;
+}
+
+#submitButton {
+	font-size: 40pt;
+		color: black;
+	text-align: center;
+}
+
+#examplerun {
+	font-size: 20pt;
+	color: black;
+	text-align: center;
+}
+
+#ParDisplay {
+width: 550px;
+  padding: 0in;
+  cursor: pointer;
+  font-size: 14pt;
+ text-align: left;
+}
+
+#ParRespDisplay {
+width: 550px;
+  padding: 0in;
+  cursor: pointer;
+  font-size: 14pt;
+ text-align: left;
+}
+
+#TDisplay {
+  padding: 0in;
+  font-size: 50pt;
+  font-weight: bold;
+ text-align: center;
+ letter-spacing: 5px;
+  position: fixed;
+  margin: -100px 0 0 -150px;
+  border: 0px;
+  height: 100px;
+  width: 300px;
+  z-index:-1;
+  color: LightGrey;
+}
+
+#TupDisplay {
+  padding: 0in;
+  font-size: 50pt;
+  font-weight: bold;
+ text-align: center;
+ letter-spacing: 5px;
+  position: fixed;
+  margin: -100px 0 0 -150px;
+  border: 0px;
+  height: 100px;
+  width: 300px;
+  z-index:-1;
+}
+
+#TdownDisplay {
+  padding: 0in;
+  font-size: 50pt;
+  font-weight: bold;
+ text-align: center;
+ letter-spacing: 5px;
+  position: fixed;
+  margin: -100px 0 0 -150px;
+  border: 0px;
+  height: 100px;
+  width: 300px;
+  z-index:-1;
+}
+
+#PupDisplay {
+  padding: 0in;
+  font-size: 50pt;
+  font-weight: bold;
+ text-align: center;
+ letter-spacing: 0px;
+  position: fixed;
+  margin: -100px 0 0 -300px;
+  border: 0px;
+  height: 100px;
+  width: 600px;
+  z-index:-1;
+}
+
+#PdownDisplay {
+  padding: 0in;
+  font-size: 50pt;
+  font-weight: bold;
+ text-align: center;
+ letter-spacing: 0px;
+  position: fixed;
+  margin: -100px 0 0 -300px;
+  border: 0px;
+  height: 100px;
+  width: 600px;
+  z-index:-1;
+}
+#PDisplay {
+  padding: 0in;
+  font-size: 50pt;
+  font-weight: bold;
+ text-align: center;
+}
+
+#RDisplay {
+  padding: 0in;
+  font-size: 50pt;
+  font-weight: bold;
+ text-align: center;
+}
+
+#Odisp {
+  padding: 0in;
+  cursor: pointer;
+  font-size: 14pt;
+  font-weight: bold;
+ text-align: left;
+}
+
+#Tnumdisp {
+  padding: 0in;
+  cursor: pointer;
+  font-size: 15pt;
+  font-weight: bold;
+ text-align: left;
+}
+
+#explorerInst {
+background-color: white;
+font-size: 15pt;
+color: black;
+text-align: center;
+}

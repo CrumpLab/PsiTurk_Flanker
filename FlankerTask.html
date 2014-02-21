@@ -1,0 +1,366 @@
+<html>
+<head>
+<link rel="stylesheet" href="Fstyle.css" type="text/css" charset="utf-8"/>
+<script type="text/javascript" src="jquery-2.1.0.min.js"></script>
+<script type="text/javascript" src="FlankerStims.js"></script>
+
+
+<script type="text/javascript">
+
+
+$(document).ready(function(){
+
+
+    // Check if the worker is PREVIEWING the HIT or if they've ACCEPTED the HIT
+    // Preview mode works with AMT
+    if (window.opener.previewit == 1)
+    {
+ 	$("#previewMode").show(); //Field -> show preview mode message
+    } else {
+    $("#previewMode").hide(); //Field -> hide preview mode message
+    window.opener.endofExp(); //Function - >Hides consent and instructions from parent page, shows info that will be displayed when the experiment ends and pop-up is closed
+    }
+    
+    
+    //INITIALIZE PAGE
+	var wh = $(window).height();		//gets current pop-up window height and width
+	var ww = $(window).width();
+
+	$("#getData").hide();           // Button -> submit data to data field RTs on parent page - stays hidden
+	$("#Tnumdisp").hide();			// Field -> hide trial counter
+	$("#ShowInstructions").hide();  // Button -> hide optional button to show instructions during task
+	$("#DemographicsButton").show(); //Button -> Click after demographics questions are completed
+	$("#MainStart").hide();			// Button -> Initializes some task variables
+	
+	//Hide fields that may be used during experiments	 
+	$("#TDisplay").hide();
+	$("#PDisplay").hide();
+	$("#PupDisplay").hide();
+	$("#PdownDisplay").hide();
+	$("#RDisplay").hide();
+	
+	//Set locations for fields based on pop-up window size
+	$("#TDisplay").css("top",wh/2);
+	$("#TDisplay").css("left",ww/2);
+	$("#TupDisplay").hide();
+	$("#TupDisplay").css("top",(wh/2)-(wh/4));
+	$("#TupDisplay").css("left",ww/2);
+	$("#PupDisplay").css("top",(wh/2)-(wh/4));
+	$("#PupDisplay").css("left",ww/2);
+	$("#TdownDisplay").hide();
+	$("#TdownDisplay").css("top",(wh/2)+(wh/4));
+	$("#TdownDisplay").css("left",ww/2);
+	$("#PdownDisplay").css("top",(wh/2)+(wh/4));
+	$("#PdownDisplay").css("left",ww/2);
+	
+	//Hide buttons that control experiment sequences 
+	$("#TaskInstruct").hide();		//Button -> triggers pop-up with instructions if subjects need reminder
+	$("#BeginExp").hide();			//Button -> triggers next() function
+	$("#blckCont").hide(); 			//Button -> triggers next() function
+	
+	
+	//Initialize Experiment Variables
+
+	 trialindex = -1;              	// Counter for the current trial number to index trialarray
+	var trialstep = 0;               // controller variable for sequential stimulus presentation
+    var keycount = 0;                // response counter
+   // var wordlength = 0;              // target word length variable to control end of response collection, not used here
+    var TotalTrials = 383;             // Total number of trials for experiment
+    var keytest = 0;                 // toggle whether keystrokes are collected or prevented  
+    var d = new Date();				//for timestamps
+    var tempfeed = "";				//used later for accuracy feedback
+    var deminfo = "";
+    data = [['']];
+		
+		
+	//FUNCTIONS FOR CONTROLLING EXPERIMENT
+	
+	//***********************		
+	//Complete Demographics -> function run when DemographicsButton is clicked
+	//***********************
+	$("#DemographicsButton").click(function(){
+		//collect all values entered from demo questionnaire and put them into deminfo variable
+	  	deminfo = $("#Country").val() + "," + $("#Sex:checked").val() + "," +
+  			$("#Age:checked").val() + "," + $("#Hand:checked").val() + "," +
+  		$("#Vision:checked").val() + "," + $("#English:checked").val();
+  		$("#Demographics").hide(); //hide questionnaire
+		$("#TaskInstruct").show(); //show main task instructions again
+		$("#MainStart").show(); //show button to continue
+		$("#DemographicsButton").hide(); //hide this button
+	});
+	
+	
+	//*********************
+	//More initialization for main experiment 
+	//*********************
+  	$("#MainStart").click(function(){
+    	trialindex++					//increments trial counter to 0
+    	$("#MainStart").hide();			//hides this button
+    	$("#InstructionFrame").hide(); //Hides instruction frame
+    	$("#ShowInstructions").show(); //show button letting subjects view instructions during task if they choose
+    	$("#Tnumdisp").show();       //Field -> will show current trial number and number of trials left
+    	$("#RDisplay").html("");  //sets Response field to empty
+ 		
+ 		//2nd attempt to center display fields in case they didn't center when the pop-up loaded
+        var wh = $(window).height();
+		var ww = $(window).width();
+		$("#TDisplay").css("top",wh/2);
+		$("#TDisplay").css("left",ww/2);
+		$("#TdownDisplay").css("top",(wh/2)+(wh/4));
+		$("#TdownDisplay").css("left",ww/2);
+		$("#PdownDisplay").css("top",(wh/2)+(wh/4));
+		$("#PdownDisplay").css("left",ww/2);
+		$("#TupDisplay").css("top",(wh/2)-(wh/4));
+		$("#TupDisplay").css("left",ww/2);
+		$("#PupDisplay").css("top",(wh/2)-(wh/4));
+		$("#PupDisplay").css("left",ww/2);
+		
+		$("#BeginExp").show(); //show final reminder before task starts
+  	});
+  	
+  	
+  	//***************
+  	//Hides final reminder, triggers Next() that controls each trial
+  	//****************
+  	$("#BStart").click(function(){
+  		$("#BeginExp").hide();
+  		next();
+  	});
+  	
+  	//***************
+  	//Hides break message after each block, triggers Next() that controls each trial
+  	//****************
+  	$("#BStart2").click(function(){
+  		$("#blckCont").hide();
+  		next();
+  	});
+ 
+  	
+  	//***********************
+  	// STIMULUS PRESENTATION and TRIAL CONTROLLER
+  	// next()
+  	//***********************
+	function next() {
+	trialstep++;
+	$("#PupDisplay").hide();
+  	$("#PdownDisplay").hide();
+	$("#TDisplay").show();
+	$("#TupDisplay").show();
+	$("#TdownDisplay").show();
+	//Shows fixation, then blank, then stimulus
+	if (trialstep <= 1) {
+		data[trialindex]=trialarray[trialindex].concat();   //record trial info to data array
+		$("#TDisplay").html("+");                           //show fixation cross	
+		$("#Tnumdisp").html(trialindex+1 + "/384 remaining"); 		// show current trial number
+		setTimeout(next,1000);                               
+	} else if (trialstep==2) { 
+		$("#TDisplay").html(""); 
+		setTimeout(next,500);
+	}
+	else {
+		keytest = 1;                                        //turn on keydown recording  
+		$("#TDisplay").html(trialarray[trialindex][0]);     //populate field with flanker stimulus
+		$("#TDisplay").show();								//show target 
+    	d = new Date();										//get target onset timestamp
+    	data[trialindex].push(d.getTime());					//store onset timestamp to data array
+	}
+	}
+  	
+  	//****************
+  	//Function To stop backspace presses that can trigger page backs in browser
+  	//Note: sometimes might want to block space bar, which triggers page downs
+  	//This code can also be combined with the Get Responses code to make a single function
+  	//*****************
+		$(function(){
+		/*
+		 * this swallows backspace keys on any non-input element.
+		 * stops backspace -> back
+		 */
+		var rx = /INPUT|SELECT|TEXTAREA/i;
+	
+		$(document).bind("keydown keypress", function(e){
+			if( e.which == 8 ){ // 8 == backspace
+				if(!rx.test(e.target.tagName) || e.target.disabled || e.target.readOnly ){
+					e.preventDefault();
+				}
+			}
+		});
+	});
+  	
+  	
+  	//****************
+  	//GET RESPONSES, trigger gonext()
+  	//*********************
+  	$("body").keypress(function(event){
+  		d = new Date(); //get timestamp for response
+  		//keytest 1 records responses from flanker trial
+  	    if (keytest == 1) {
+  	    	keycount++
+  	    	if (keycount <= 1) {
+  	    		$("#RDisplay").append(String.fromCharCode(event.which)); //could be used for echoing reponse
+  	    		data[trialindex].push(d.getTime(),String.fromCharCode(event.which)); //store response timestamp & response character in data array
+  	    		//check for correct response and give feedback
+  	    		tempfeed = $("#RDisplay").html();
+  	    		if (tempfeed == trialarray[trialindex][1]) {
+  	    		$("#TDisplay").html("Correct"); 
+  	    		}else{
+  	    		$("#TDisplay").html("Incorrect"); 
+  	    		}
+  	    		//check for slow responses and give feedback
+  	    		if (data[trialindex][5]-data[trialindex][4]>1500){
+  	    		$("#PupDisplay").show();
+  	    		$("#PupDisplay").html("RESPOND FASTER !"); 
+  	    		}
+  	    		setTimeout(gonext,500);				// trigger gonext() function controlling trials, blocks, and end of experiment
+  	    		
+  	    		//clear fields, note some may not be used in this version
+  	    		$("#RDisplay").html("");          
+  	    		$("#PDisplay").html("");			
+  	    		$("#TupDisplay").html("");
+  	    		$("#TdownDisplay").html("");			
+  	  		}
+  	 	}	
+  	});
+  	      	    
+  	    
+  	   //**************
+  	   //TRIAL, BLOCK and End of experiment Handler
+  	   //gonext()
+  	   //************** 
+  	    function gonext() {
+  	    trialindex++		//increment trial number
+  	    trialstep = 0;		//initialize trialstep,keycount,keytest
+  	    keycount = 0;		
+  	    keytest = 0;
+  	       //BLOCK CONTROLLER
+  	    	if (trialindex <= TotalTrials){
+  	    		if (trialindex == 96 || trialindex == 96*2 || trialindex == 96*3) {
+  	    		$("#TDisplay").html("Continue when ready");
+  	    		$("#PupDisplay").hide();
+  				$("#PdownDisplay").hide();
+  	    		$("#blckCont").show(); 
+  	    		}else{
+  	    		$("#getData").click();
+  	    		setTimeout(next,500);
+  	    		}
+  	    	} else{
+  	    	    $("#TDisplay").html("Finished: Press submit to complete hit");
+  	    	    window.opener.endofExp();
+  	    	    $("#getData").click();
+  	    	    $("#PDisplay").hide();
+  	    	    $("#PupDisplay").hide();
+  	    	    $("#PdownDisplay").hide();
+  	    	    $("#RDisplay").hide();
+  	    	    $("#Tnumdisp").hide();
+  	    	    $("#ShowInstructions").hide();
+  	    	    window.close();
+  	    	}
+  	    	}
+  	
+ 	//****************
+  	//DATA button
+  	//on each click joins the demographic info, with data array and puts it into RTs field of the parent page
+  	//The result is one big colon (:) delimited line of data
+  	//************************
+  	$("#getData").click(function(){
+  	  $("#RTs", opener.window.document).val(deminfo + ":" + data.join(":"));
+  	});
+});
+
+	function basicPopup(url) {
+		popupWindow = window.open(url,'popUpWindow','height=' + screen.availHeight + ',width=' +screen.availWidth+',\
+		left=100,top=100,resizable=yes,scrollbars=yes,toolbar=no,\
+		menubar=no,location=no,directories=no,status=no');
+	}
+	
+		function basicPopup2(url) {
+		popupWindow2 = window.open(url,'popUpWindow2','height= 300,width=400,\
+		left=100,top=100,resizable=yes,scrollbars=yes,toolbar=no,\
+		menubar=no,location=no,directories=no,status=no');
+	}
+
+</script>
+</head>
+
+
+
+
+
+<body>
+<button id="ShowInstructions" onclick="basicPopup2('FlankerInstructions.html');return false">Show Instructions</button>
+<p id="Tnumdisp"></p>
+
+<button id="getData"></button>
+<p align="center">
+<button id="MainStart">Start Task: press accept hit before starting</button></p>
+<p id="previewMode" align="center"> You are in preview mode. To complete the hit close this window and accept hit before continuing</p>
+<p id="PDisplay"> </p>
+<p id="PupDisplay"> </p>
+<p id="PdownDisplay"> </p>
+<p id="TDisplay"> </p>
+<p id="TupDisplay"> </p>
+<p id="TdownDisplay"> </p>
+<p id="RDisplay"> </p>
+
+<div id="BeginExp" align="center">
+<p align="center"> Final instruction reminder:<p>
+<p align="center"> Identify the center letter by pressing the appropriate key<p>
+<p align="center"> Respond as quickly and accurately as possible to the stimulus<p>
+<p align="center"> Press button to start<p>
+<button id="BStart"> Start </button>
+</div>
+
+<div id="blckCont" align="center">
+<button id="BStart2" align="center"> Continue </button>
+</div>
+
+<div id="Demographics" style="text-align:center">
+<p>As a part of the research we are collecting general demographic information. </p>
+<p>You are not required to complete these questions. </p>
+<p>However, doing so will help us better understand our results.</p>
+<p>1. Country
+<input id="Country" type="text"> </p>
+<p>2.
+<input id="Sex" type="radio" name="SexGroup" value="Male"> Male
+<input id="Sex" type="radio" name="SexGroup" value="Female"> Female</p>
+<p>3.  Age Range</p>
+<input id="Age" type="radio" name="AgeGroup" value="20"> < 20
+<input id="Age" type="radio" name="AgeGroup" value="25"> 20 - 25
+<input id="Age" type="radio" name="AgeGroup" value="30"> 26 - 30
+<input id="Age" type="radio" name="AgeGroup" value="35"> 31 - 35
+<input id="Age" type="radio" name="AgeGroup" value="40"> 36 - 40<br>
+<input id="Age" type="radio" name="AgeGroup" value="45"> 41 - 45
+<input id="Age" type="radio" name="AgeGroup" value="50"> 46 - 50
+<input id="Age" type="radio" name="AgeGroup" value="55"> 51 - 55
+<input id="Age" type="radio" name="AgeGroup" value="60"> 56 - 60
+<input id="Age" type="radio" name="AgeGroup" value="65"> 61 - 65
+<input id="Age" type="radio" name="AgeGroup" value="70"> 66 and above<br>
+<p>4. Handedness</p>
+<input id="Hand" type="radio" name="HandGroup" value="Right"> Right
+<input id="Hand" type="radio" name="HandGroup" value="Left"> Left
+<input id="Hand" type="radio" name="HandGroup" value="Both"> Both
+<p>5. Vision</p>
+<input id="Vision" type="radio" name="VisionGroup" value="Normal"> Normal eyesight without needing glasses<br>
+<input id="Vision" type="radio" name="VisionGroup" value="Corrected"> Corrected Vision (wear glasses)<br>
+<input id="Vision" type="radio" name="VisionGroup" value="problems"> Poor eyesight and do not wear glasses<br>
+<p>6. English Ability</p>
+<input id="English" type="radio" name="EnglishGroup" value="First"> First-language speaker<br>
+<input id="English" type="radio" name="EnglishGroup" value="Second"> Second-language speaker<br>
+<input id="English" type="radio" name="EnglishGroup" value="None"> No English ability<br>
+<button id="DemographicsButton">Continue</button>
+</div>
+
+<div id="TaskInstruct">
+<tr><td height="100%">
+<p align="center">
+<iframe id="InstructionFrame" width="60%" height="50%" src="FlankerInstructions.html"></iframe></p>
+</td></tr>
+</div>
+
+
+</body>
+
+</html>
+
+
+
